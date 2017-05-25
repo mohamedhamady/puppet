@@ -108,8 +108,66 @@ puppet cert sign wiki
 
 sudo puppet agent --verbose --no-daemonize --onetime
 
-## Puppet codes
+## Basic Puppet codes (see nodes-v1.pp)
 - create /etc/puppet/environments/production/manifests/nodes.pp
 - add basic puppet code (see nodes-v1.pp)
 - go back to wiki and execute puppet agent -t (for test)
+
+### Basic Puppet codes - modules
+
+- Install existing module
+
+puppet module install puppetlabs-vcsrepo --version 1.5.0 --modulepath /etc/puppet/environments//production/module
+s/
+
+puppet module install puppetlabs-apache --version 1.11.0 --modulepath /etc/puppet/environments//production/module
+s/
+
+
+- Generate your own module
+```bash
+cd /etc/puppet/environments/production/modules
+
+sudo puppet module generate med-mediawiki --environment production
+sudo mv med-mediawiki mediawiki
+
+```
+
+dirs:
+  - manifests: puppet code (classes, variables, ...) automatically loaded
+  - files: static files 
+  - templates: mixof static and dynamic files
+  - lib: custom facts (service name depending on osfamily for example)
+  - facts.d: exetrnal facts (using ruby for example)
+  - tests and spec: used for unit testing
+
+
+edit mediawiki/manifests/init.pp
+
+class mediawiki {
+
+    $phpmysql = $osfamily ? {
+        'redhat' => 'php-mysql',
+        'debian' => 'php5-mysql',
+        default => 'php-mysql',
+    }
+
+    package { $phpmysql:
+        ensure => 'present',
+    }
+
+    if $osfamily == 'redhat' {
+        package { 'php-xml':
+            ensure => 'present',
+        }
+    }  
+
+    class { '::apache':
+        docroot => '/var/www/html',
+        mpm_module => 'prefork',
+        subscribe => Package[$phpmysql],
+    }
+
+    class { '::apache::mod::php':}    
+} 
 
