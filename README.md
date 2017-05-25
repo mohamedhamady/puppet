@@ -1,9 +1,9 @@
-# Puppet install and configure
+# Install and configure puppet
 
 ## Create vagrant machines
 see vagrant file
 
-## install puppetserver
+## install basic tools
 
 ```bash
 
@@ -109,6 +109,7 @@ puppet cert sign wiki
 sudo puppet agent --verbose --no-daemonize --onetime
 
 ## Puppet codes
-craete /etc/puppet/environments/production/manifests/nodes.pp
-
+- create /etc/puppet/environments/production/manifests/nodes.pp
+- add basic puppet code (see nodes-v1.pp)
+- go back to wiki and execute puppet agent -t (for test)
 
