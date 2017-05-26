@@ -1,0 +1,14 @@
+---
+
+classes:
+  - mediawiki
+  - linux
+
+mediawiki::wikimetanamespace: wiki
+mediawiki::wikisitename: wiki
+mediawiki::wikiserver: http://192.168.2.20
+mediawik::wikidbserver: localhost
+mediawik::wikidbuser: root
+mediawik::wikidbname: wikidb
+mediawik::wikidbpassword: strongpassword
+mediawik::wikiupgradekey: puppet

@@ -37,6 +37,15 @@
 #
 class mediawiki {
 
+    $wikimetanamespace = hiera('mediawiki::wikimetanamespace')
+    $wikisitename = hiera('mediawiki::wikisitename')
+    $wikiserver = hiera('mediawiki::wikiserver')
+    $wikidbserver = hiera('mediawik::wikidbserver')
+    $wikidbname = hiera('mediawik::wikidbname')
+    $wikidbuser = hiera('mediawik::wikidbuser')
+    $wikidbpassword = hiera('mediawik::wikidbpassword')
+    $wikiupgradekey = hiera('mediawik::wikiupgradekey')
+
     $phpmysql = $osfamily ? {
         'redhat' => 'php-mysql',
         'debian' => 'php5-mysql',
@@ -61,6 +70,21 @@ class mediawiki {
 
     class { '::apache::mod::php':}
 
+
+    class { '::mysql::server':
+      root_password           => 'strongpassword',
+      remove_default_accounts => true,
+      override_options        => $override_options
+    }
+
+    class { '::firewall':}
+
+    firewall { '00O allow http access':
+        port  => '80',
+        proto  => 'tcp',
+        action => 'accept',
+    }
+
     vcsrepo { '/var/www/html':
         ensure   => 'present',
         provider => 'git',
@@ -69,24 +93,10 @@ class mediawiki {
     }
 
     file { '/var/www/html/index.html':
-        ensure => 'absent'
+       ensure => 'absent'
     }
   
     File['/var/www/html/index.html'] -> Vcsrepo['/var/www/html']
-
-    class { '::mysql::server':
-      root_password           => 'strongpassword',
-      remove_default_accounts => true,
-      override_options        => $override_options
-    }
-   
-    class { '::firewall':}
-
-    firewall { '00O allow http access':
-        port  => '80',
-        proto  => 'tcp',
-        action => 'accept',
-    }
 
     file { 'LocalSettings.php':
         path => '/var/www/html/LocalSettings.php',

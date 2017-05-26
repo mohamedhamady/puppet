@@ -1,19 +1,9 @@
 node 'wiki' {
-    $wikisitename = 'wiki'
-    $wikisitenamespace = 'wiki'
-    $wikiserver = 'http://192.168.2.20'
-    $wikidbserver = 'localhost'
-    $wikidbname = 'wikidb'
-    $wikidbuser = 'root'
-    $wikidbpassword = 'strongpassword'
-    $wikiupgradekey = 'puppet'
-    class { 'linux': }
-    class { 'mediawiki': }
+    hiera_include('classes')
 }
 
 node 'wikitest' {
-    class { 'linux': }
-    class { 'mediawiki': }
+    hiera_include('classes')
 }
 
 class linux {
